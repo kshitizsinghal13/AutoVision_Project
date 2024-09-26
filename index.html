@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Analysis</title>
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
+    <style>
+        body
+        {   
+            background-color: #f0f8ff;
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+        }
+
+        h1, h3, h5 {
+            margin: 10px 0;
+        }
+
+        video, canvas {
+            display: block;
+            margin: 10px auto;
+            border: 2px solid #4CAF50;
+            border-radius: 8px;
+            max-width: 100%;
+            height: auto;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 80%;
+            max-width: 300px;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        #message {
+            margin-top: 20px;
+            font-size: 24px;
+            color: #4CAF50;
+            display: none;
+        }
+
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 24px; 
+            }
+            
+            h3 {
+                font-size: 18px; 
+            }
+            
+            h5 {
+                font-size: 16px; 
+                padding-left: 10px; 
+                padding-right: 10px; 
+            }
+
+            button {
+                font-size: 14px; 
+                padding: 8px; 
+                width: 90%; 
+                max-width: none; 
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>AUTOVISION</h1>
+    <h3>Created By Kshitiz Singhal (2200320100091) (ABES ENGINEERING COLLEGE)
+        <a href="https://knowaboutkshitiz.netlify.app/index2.html" target="_blank">Know more!</a>
+
+    </h3>
+    <h5>In this, the image will be captured using your webcam and the backend will analyze the whole image and speak the result.</h5>
+    <h5>NOTE: Do not try to analyze any intimate content, otherwise the application will close immediately.</h5> 
+    <video id="video" width="640" height="480" autoplay></video>
+    <button id="captureButton">Capture Image</button>
+    <button id="toggleCameraButton">Switch Camera</button>
+    <canvas id="canvas" width="640" height="480" style="display:none;"></canvas>
+    
+    <div id="message">Captured!</div>
+
+    <script>
+        const video = document.getElementById('video');
+        const canvas = document.getElementById('canvas');
+        const captureButton = document.getElementById('captureButton');
+        const message = document.getElementById('message'); 
+        const toggleCameraButton = document.getElementById('toggleCameraButton');
+        
+        let stream;
+        let currentFacingMode = 'environment'; // Start with rear camera
+
+        function startCamera(facingMode) {
+            navigator.mediaDevices.getUserMedia({
+                video: { facingMode }
+            })
+            .then(mediaStream => {
+                stream = mediaStream;
+                video.srcObject = stream;
+            })
+            .catch(err => {
+                console.error("Error accessing webcam:", err);
+            });
+        }
+
+        startCamera(currentFacingMode);
+
+        captureButton.addEventListener('click', () => {
+            const context = canvas.getContext('2d');
+            context.drawImage(video, 0, 0, canvas.width, canvas.height);
+            const imageData = canvas.toDataURL('image/png');
+            
+            stream.getTracks().forEach(track => track.stop());
+            
+            fetch('/analyze', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'ngrok-skip-browser-warning': 'true',
+                    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+                },
+                body: JSON.stringify({ image_data: imageData })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.result) {
+                    speakOnce(data.result);
+                    message.style.display = 'block';
+                } else {
+                    console.error(data.error);
+                }
+            });
+        });
+
+        toggleCameraButton.addEventListener('click', () => {
+            currentFacingMode = (currentFacingMode === 'environment') ? 'user' : 'environment';
+            
+            // Stop current stream
+            stream.getTracks().forEach(track => track.stop());
+            
+            // Start camera with new facing mode
+            startCamera(currentFacingMode);
+        });
+
+        let isSpeaking = false;
+
+        function speakOnce(text) {
+            if (!isSpeaking) { 
+                isSpeaking = true; 
+                const utterance = new SpeechSynthesisUtterance(text);
+
+                utterance.onend = function() {
+                    isSpeaking = false; 
+                    resumeWebcam(); 
+                };
+
+                window.speechSynthesis.speak(utterance);
+            }
+        }
+
+        function resumeWebcam() {
+            startCamera(currentFacingMode); // Resume with the current facing mode
+            message.style.display = 'none'; 
+        }
+    </script>
+</body>
+</html>
