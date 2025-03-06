@@ -1,81 +1,72 @@
-## README
+# AI-Powered Image Analyzer
 
-### Project Overview
+This project is a Flask-based web application that allows users to upload images for analysis using Google's Generative AI. The application processes images and provides descriptions as if guiding a blind friend, while also detecting illegal, dangerous, or suspicious elements. It features voice output and logs all responses for future reference.
 
-This project is a Flask-based web application designed to analyze images using AI and provide descriptive feedback. The application captures images, analyzes them using a generative AI model, and returns a concise description of the image content. It also includes features for text-to-speech conversion and logging of analysis results.
+## Features
+- Upload images for AI-based analysis
+- Receive concise and meaningful descriptions
+- Identify famous individuals, song lyrics, and references
+- Provide navigation details for the visually impaired
+- Store analysis logs for reference
+- Convert results to speech output using pyttsx3
+- Accessible remotely via Ngrok
 
-### Features
+## Technologies Used
+- Python
+- Flask
+- Google Generative AI (Gemini 1.5 Flash)
+- PIL (Pillow) for image processing
+- Pyttsx3 for text-to-speech
+- Pyngrok for remote access
 
-- **Image Analysis**: Uses a generative AI model to analyze images and provide descriptive feedback.
-- **Text-to-Speech Conversion**: Converts text into speech using the `pyttsx3` library.
-- **Logging**: Logs analysis results to a text file for future reference.
-- **Ngrok Integration**: Allows for easy sharing of the application via a public URL.
+## Installation and Setup
+### Prerequisites
+Ensure you have Python 3 installed along with the required dependencies.
 
-### Requirements
+### Clone the Repository
+```shhttps://github.com/kshitizsinghal13/AutoVision_Project.git
+cd AutoVision_Project
+```
 
-To run this project, you need to install the following dependencies:
+### Install Dependencies
+```sh
+pip install flask google-generativeai pillow pyttsx3 pyngrok
+```
 
-- **Flask**
-- **google.generativeai** (Note: Ensure proper installation method for this library)
-- **Pillow** (for PIL)
-- **pyttsx3**
-- **pyngrok**
-- **base64**
-- **io**
-- **time**
+### Set API Key
+Replace `DEFAULT_API_KEY` in the script with your Google Generative AI API key.
 
-### Installation
+### Run the Application
+```sh
+python app.py
+```
 
-1. **Create a Virtual Environment**:
-   ```bash
-   python3 -m venv venv
-   ```
+### Access via Ngrok
+Ngrok will generate a public URL, which can be used to access the application remotely.
 
-2. **Activate the Virtual Environment**:
-   ```bash
-   # On Unix/Linux/MacOS
-   source venv/bin/activate
-   
-   # On Windows
-   venv\Scripts\activate
-   ```
+## Usage
+1. Open the application in a web browser.
+2. Upload an image for analysis.
+3. View the generated response and listen to the text-to-speech output.
+4. Check the `responses.log` file for stored results.
 
-3. **Install Dependencies**:
-   First, create a `requirements.txt` file using:
-   ```bash
-   pip freeze > requirements.txt
-   ```
-   Then, install dependencies:
-   ```bash
-   pip install -r requirements.txt
-   ```
+## File Structure
+```
+image-analyzer/
+│── app.py            # Main application script
+│── templates/
+│   └── index.html    # Web interface template
+│── captured_images/  # Directory for storing uploaded images
+│── responses.log     # Log file for storing AI-generated responses
+│── README.md         # Project documentation
+```
 
-   If `google.generativeai` is not pip-installable, ensure it is installed according to its documentation.
+## License
+This project is open-source and available under the MIT License.
 
-4. **Run the Application**:
-   ```bash
-   python app.py
-   ```
+## Contributing
+Feel free to submit issues or pull requests to improve the project.
 
-### Usage
+## Contact
+For inquiries, reach out at your-email@example.com.
 
-1. **Start the Application**: Run the Flask app.
-2. **Access the Application**: Open a web browser and navigate to `http://127.0.0.1:5000/`.
-3. **Send Image for Analysis**: Use the `/analyze` endpoint to send an image for analysis. The image should be encoded in base64 format.
-
-### API Endpoints
-
-- **GET /**: Returns the index.html template.
-- **POST /analyze**: Analyzes an image and returns a descriptive result.
-
-### Notes
-
-- Ensure you have a valid API key for `google.generativeai`.
-- The application uses ngrok to expose the local server to the internet. Adjust the domain as needed.
-- The `base64`, `io`, and `time` libraries are part of Python's standard library and do not need to be explicitly listed in `requirements.txt`.
-
-### Future Improvements
-
-- Enhance the AI model for more accurate image analysis.
-- Implement user authentication for secure access.
-- Expand the application to support more image formats and sizes.
