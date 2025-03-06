@@ -25,8 +25,8 @@ Ensure you have Python 3 installed along with the required dependencies.
 
 ### Clone the Repository
 ```sh
-https://github.com/your-repo/image-analyzer.git
-cd image-analyzer
+https://github.com/kshitizsinghal13/AutoVision_Project.git
+cd AutoVision_Project
 ```
 
 ### Install Dependencies
@@ -69,4 +69,4 @@ This project is open-source and available under the MIT License.
 Feel free to submit issues or pull requests to improve the project.
 
 ## Contact
-For inquiries, reach out at your-email@example.com.
+For inquiries, reach out at kshitiz1303@gmail.com.
